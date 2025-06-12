@@ -1,0 +1,24 @@
+name: Sample Manual Run With Delay
+
+on:
+  workflow_dispatch: # 手動実行用トリガー
+  schedule:          # スケジュール実行（mainブランチ用・例）
+    - cron: '0 0 * * *'
+
+jobs:
+  main-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ブランチ名の表示
+        run: echo "このジョブはブランチ: ${{ github.ref_name }} で実行されています"
+
+      - name: mainブランチで手動実行時は30秒待機
+        # mainブランチ かつ 手動実行の場合のみ実行
+        if: github.ref_name == 'main' && github.event_name == 'workflow_dispatch'
+        run: |
+          echo "これはmainブランチの手動実行です。"
+          echo "30秒待機します。この間にキャンセルできます。"
+          sleep 30
+
+      - name: 実際の処理
+        run: echo "ここから本処理を開始します！"
