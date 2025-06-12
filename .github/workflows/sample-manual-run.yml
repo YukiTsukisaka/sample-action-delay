@@ -13,8 +13,8 @@ jobs:
         run: echo "このジョブはブランチ: ${{ github.ref_name }} で実行されています"
 
       - name: mainブランチで手動実行時は30秒待機
-        # mainブランチ かつ 手動実行の場合のみ実行
-        if: github.ref_name == 'main' && github.event_name == 'workflow_dispatch'
+        # mainブランチかつ手動実行の場合のみ実行
+        if: ${{ github.ref_name == 'main' && github.event_name == 'workflow_dispatch' }}
         run: |
           echo "これはmainブランチの手動実行です。"
           echo "30秒待機します。この間にキャンセルできます。"
