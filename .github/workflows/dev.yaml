@@ -1,0 +1,14 @@
+name: Sample Manual Run Devlop
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 3 * * *'
+
+jobs:
+  sub-job:                # ❶ 先に走る前処理ジョブ
+    runs-on: ubuntu-latest
+    steps:
+      - name: ブランチ名の表示
+        run: |
+          echo "このジョブはリファレンス: ${{ github.ref }} で実行されています"
