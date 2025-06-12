@@ -1,27 +1,26 @@
 name: Sample Manual Run With Delay
 
 on:
-  workflow_dispatch:          # 手動トリガー
-  schedule:                   # 例: 毎日 09:00 JST
+  workflow_dispatch:
+  schedule:
     - cron: '0 0 * * *'
 
 jobs:
-  sub-job:
+  sub-job:                # ❶ 先に走る前処理ジョブ
     runs-on: ubuntu-latest
     steps:
-    # ★ run をパイプ(|)で囲み、コマンド全体を文字列として扱う
-    - name: ブランチ名の表示
-      run: |
-        echo "このジョブはリファレンス: ${{ github.ref }} で実行されています"
+      - name: ブランチ名の表示
+        run: |
+          echo "このジョブはリファレンス: ${{ github.ref }} で実行されています"
 
-    # main を手動実行したときだけ 30 秒待機
-    - name: main ブランチ手動実行なら 30 秒待機
-      if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
-      run: |
-        echo "main ブランチの手動実行です。30 秒間キャンセルできます..."
-        sleep 30
+      - name: main ブランチ手動実行なら 30 秒待機
+        if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
+        run: |
+          echo "main ブランチの手動実行です。30 秒間キャンセルできます..."
+          sleep 30
 
-  main-job:
+  main-job:               # ❷ sub-job 完了後に実行
+    needs: sub-job        # ← これだけで直列化できる
     runs-on: ubuntu-latest
     steps:
       - name: 実際の処理
