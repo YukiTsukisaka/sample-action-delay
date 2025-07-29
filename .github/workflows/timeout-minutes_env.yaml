@@ -1,21 +1,44 @@
-name: example
+name: Two-Job Dynamic Timeout
+
 on:
   workflow_dispatch:
 
 jobs:
-  build:
+  # Job 1: 環境変数を読み込んで出力するだけのジョブ
+  setup:
     runs-on: ubuntu-latest
-    # ← 環境「Production」に紐づく変数を参照
-    environment: Production      
+    environment: Production
+    
+    # このジョブが出力するデータを定義
+    outputs:
+      timeout_value: ${{ steps.set-timeout.outputs.value }}
+
+    steps:
+      - name: Read TIMEOUT variable and set as output
+        id: set-timeout # 出力を参照するためのID
+        run: |
+          # vars.TIMEOUTの値を "value" という名前で出力に設定する
+          # もし変数が空ならデフォルトで60を設定
+          echo "value=${{ vars.TIMEOUT || 60 }}" >> $GITHUB_OUTPUT
+
+  # Job 2: 実際の処理を行うジョブ
+  deploy:
+    runs-on: ubuntu-latest
+    
+    # setupジョブが完了するまで待機する
+    needs: setup
+    
+    # setupジョブの出力を使ってtimeout-minutesを設定
+    timeout-minutes: ${{ fromJSON(needs.setup.outputs.timeout_value) }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 長時間走るステップ
-        # vars.TIMEOUT は文字列なので fromJSON で整数に変換
-        timeout-minutes: ${{ fromJSON(vars.TIMEOUT) }}
+      - name: Long task
         run: |
-          echo "Doing long task..."
+          echo "This job will time out in ${{ needs.setup.outputs.timeout_value }} minutes."
+          echo "Starting long task..."
+          # ここに実際のデプロイ処理などを記述
           sleep 300
           echo "Done long task!"
