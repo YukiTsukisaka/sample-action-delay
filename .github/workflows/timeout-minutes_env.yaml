@@ -1,36 +1,22 @@
-# .github/workflows/dynamic-timeout.yml
-# ------------------------------------
-# Production 環境に「TIMEOUT」変数（数値のみ）を登録しておくと、
-# その値がジョブ全体の timeout‑minutes に反映されます。
-# TIMEOUT が未設定なら 60 分をデフォルトにします。
-
-name: Dynamic Timeout (single job)
-
-on:
-  workflow_dispatch:
+name: Two‑Job Dynamic Timeout
+on: workflow_dispatch
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    environment: Production
+    outputs:
+      timeout_value: ${{ steps.set-timeout.outputs.value }}
+    steps:
+      - id: set-timeout
+        run: echo "value=${{ vars.TIMEOUT || '60' }}" >> "$GITHUB_OUTPUT"
+
   deploy:
     runs-on: ubuntu-latest
-    environment: Production          # ここで環境変数をバインド
-
-    # Production 環境の vars.TIMEOUT を env.TIMEOUT に流し込み
-    # 空なら '60' をフォールバック
-    env:
-      TIMEOUT: ${{ vars.TIMEOUT || '60' }}
-
-    # ジョブ全体のタイムアウトを動的に設定
-    timeout-minutes: ${{ fromJSON(env.TIMEOUT) }}
-
+    needs: setup
+    timeout-minutes: ${{ fromJSON(needs.setup.outputs.timeout_value) }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Show timeout value
-        run: echo "TIMEOUT is set to ${{ env.TIMEOUT }} minutes"
-
-      - name: Long task
-        run: |
-          echo "Starting long task..."
+      - uses: actions/checkout@v4
+      - run: |
+          echo "ジョブは ${{ needs.setup.outputs.timeout_value }} 分でタイムアウトします"
           sleep 300
-          echo "Done long task!"
