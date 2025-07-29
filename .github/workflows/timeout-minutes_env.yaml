@@ -1,0 +1,24 @@
+name: Manual Dispatch with Timeout
+
+on:
+  workflow_dispatch:
+    inputs:
+      timeout:
+        description: 'Job timeout in minutes'
+        required: true
+        default: '10' # デフォルト値を設定
+        type: number
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # inputsコンテキストを使ってタイムアウト値を参照
+    timeout-minutes: ${{ github.event.inputs.timeout }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: A long-running step
+        run: |
+          echo "This job will time out in ${{ github.event.inputs.timeout }} minutes."
+          sleep 300
