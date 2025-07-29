@@ -20,5 +20,5 @@ jobs:
 
       - name: A long-running step
         run: |
-          echo "This job will time out in ${{ github.event.inputs.timeout }} minutes."
+          echo "This job will time out in ${{ fromJSON(github.event.inputs.timeout) }} minutes."
           sleep 300
