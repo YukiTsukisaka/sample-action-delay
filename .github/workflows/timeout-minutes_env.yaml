@@ -17,3 +17,5 @@ jobs:
         timeout-minutes: ${{ fromJSON(vars.TIMEOUT) }}
         run: |
           echo "Doing long task..."
+          sleep 300
+          echo "Done long task!"
