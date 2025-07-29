@@ -1,24 +1,26 @@
-name: Manual Dispatch with Timeout
+name: Deploy to Production
 
 on:
-  workflow_dispatch:
-    inputs:
-      timeout:
-        description: 'Job timeout in minutes'
-        required: true
-        default: 10 # デフォルト値を設定
-        type: number
+  push:
+    branches:
+      - main
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-    # inputsコンテキストを使ってタイムアウト値を参照
-    timeout-minutes: ${{ github.event.inputs.timeout }}
+    
+    # 1. Production環境を指定する
+    environment: Production
+    
+    # 2. varsコンテキストを使ってTIMEOUT変数を参照する
+    timeout-minutes: ${{ vars.TIMEOUT }}
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: A long-running step
+      - name: Run deployment script
         run: |
-          echo "This job will time out in ${{ fromJSON(github.event.inputs.timeout) }} minutes."
-          sleep 300
+          echo "Starting deployment to Production..."
+          # ここにデプロイ処理を記述
+          echo "Deployment finished."
