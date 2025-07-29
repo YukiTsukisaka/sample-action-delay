@@ -1,28 +1,19 @@
-name: Deploy to Production
-
+name: example
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
-    environment: Production
-    
-    # ⬇️ ここを修正: TIMEOUT変数が空、または存在しない場合、デフォルトで30分に設定
-    timeout-minutes: ${{ vars.TIMEOUT || 30 }}
+    # ← 環境「Production」に紐づく変数を参照
+    environment: Production      
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # (オプション) デバッグ用に変数の値を出力するステップ
-      - name: Debug Timeout Variable
-        run: echo "The timeout value is '${{ vars.TIMEOUT }}'. The final timeout is ${{ vars.TIMEOUT || 30 }} minutes."
-
-      - name: Run deployment script
+      - name: 長時間走るステップ
+        # vars.TIMEOUT は文字列なので fromJSON で整数に変換
+        timeout-minutes: ${{ fromJSON(vars.TIMEOUT) }}
         run: |
-          echo "Starting deployment to Production..."
-          # ...デプロイ処理...
-          echo "Deployment finished."
+          echo "Doing long task..."
