@@ -6,7 +6,7 @@ on:
       timeout:
         description: 'Job timeout in minutes'
         required: true
-        default: '10' # デフォルト値を設定
+        default: 10 # デフォルト値を設定
         type: number
 
 jobs:
