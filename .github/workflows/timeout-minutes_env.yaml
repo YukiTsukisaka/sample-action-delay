@@ -8,19 +8,21 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
-    # 1. Production環境を指定する
     environment: Production
     
-    # 2. varsコンテキストを使ってTIMEOUT変数を参照する
-    timeout-minutes: ${{ vars.TIMEOUT }}
+    # ⬇️ ここを修正: TIMEOUT変数が空、または存在しない場合、デフォルトで30分に設定
+    timeout-minutes: ${{ vars.TIMEOUT || 30 }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # (オプション) デバッグ用に変数の値を出力するステップ
+      - name: Debug Timeout Variable
+        run: echo "The timeout value is '${{ vars.TIMEOUT }}'. The final timeout is ${{ vars.TIMEOUT || 30 }} minutes."
+
       - name: Run deployment script
         run: |
           echo "Starting deployment to Production..."
-          # ここにデプロイ処理を記述
+          # ...デプロイ処理...
           echo "Deployment finished."
