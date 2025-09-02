@@ -1,0 +1,30 @@
+name: Orchestrator
+
+on:
+  workflow_dispatch:
+
+jobs:
+  prev:               # 前ワークフロー（前処理）
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "前ワークフロー（前処理）を実行"
+
+  # ▼ 並列に実行（needs: prev だけ指定するとデフォルト並列）
+  next1:
+    needs: prev
+    uses: ./.github/workflows/next1.yml
+    with:
+      target: "staging"
+
+  next2:
+    needs: prev
+    uses: ./.github/workflows/next2.yml
+    with:
+      target: "staging"
+
+  # ▼ 直列で実行したい場合（next2 を next1 の後に）
+  # next2:
+  #   needs: [prev, next1]
+  #   uses: ./.github/workflows/next2.yml
+  #   with:
+  #     target: "staging"

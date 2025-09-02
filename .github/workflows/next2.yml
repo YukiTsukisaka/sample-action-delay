@@ -1,0 +1,12 @@
+name: Next 2
+on:
+  workflow_call:
+    inputs:
+      target:
+        type: string
+        required: true
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Next2 for ${{ inputs.target }}"
