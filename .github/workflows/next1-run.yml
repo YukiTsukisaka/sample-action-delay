@@ -1,0 +1,11 @@
+name: Next1 (on Prev)
+on:
+  workflow_run:
+    workflows: ["Prev"]          # ← 前WF名
+    types: [completed]
+jobs:
+  run:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}   # 成功時のみ
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Next1 を起動（Prev 成功検知）"
