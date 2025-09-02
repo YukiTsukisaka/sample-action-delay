@@ -1,7 +1,7 @@
 name: Next2 (on Prev)
 on:
   workflow_run:
-    workflows: ["Prev"]          # ← 前WF名
+    workflows: ["Prev_B"]          # ← 前WF名
     types: [completed]
 jobs:
   run:
