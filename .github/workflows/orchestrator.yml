@@ -5,6 +5,7 @@ on:
 
 jobs:
   prev:               # 前ワークフロー（前処理）
+    environment: Production
     runs-on: ubuntu-latest
     steps:
       - run: echo "前ワークフロー（前処理）を実行"
@@ -13,7 +14,6 @@ jobs:
   next1:
     needs: prev
     uses: ./.github/workflows/next1.yml
-    environment: Production
     with:
       target: "staging"
     secrets: inherit

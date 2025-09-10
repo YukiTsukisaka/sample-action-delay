@@ -10,6 +10,7 @@ on:
         required: false
 jobs:
   run:
+    environment: Production
     runs-on: ubuntu-latest
     steps:
       - run: echo "Next2 for ${{ inputs.target }}"

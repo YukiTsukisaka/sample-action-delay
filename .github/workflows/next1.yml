@@ -11,6 +11,7 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
+    environment: Production
     steps:
       - run: echo "Next1 for ${{ inputs.target }}"
       - name: Show SAMPLE_SECRET (masked)
