@@ -13,6 +13,7 @@ jobs:
   next1:
     needs: prev
     uses: ./.github/workflows/next1.yml
+    environment: Production
     with:
       target: "staging"
     secrets: inherit
