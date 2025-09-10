@@ -5,8 +5,21 @@ on:
       target:
         type: string
         required: true
+    secrets:
+      SAMPLE_SECRET:
+        required: false
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Next2 for ${{ inputs.target }}"
+      - name: Show SAMPLE_SECRET (masked)
+        env:
+          SAMPLE_SECRET: ${{ secrets.SAMPLE_SECRET }}
+        run: |
+          if [ -z "$SAMPLE_SECRET" ]; then
+            echo "SAMPLE_SECRET is not set."
+          else
+            echo "::add-mask::$SAMPLE_SECRET"
+            echo "SAMPLE_SECRET value: $SAMPLE_SECRET"
+          fi
